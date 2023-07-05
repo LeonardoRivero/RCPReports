@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import CRUDPhysicalExamResult
+from .views import index
 
 
 urlpatterns = [
-    path("physicalexamresult/", CRUDPhysicalExamResult.as_view()),
+    path("rips/", index),
 ]

@@ -25,21 +25,22 @@ SECRET_KEY = "django-insecure-n21f-h2s*t-08)p*g85*a4-&durh8=$c7z%3$$9gp+a0^c3$((
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'RIPS',
-    "drf_spectacular",
-    'rest_framework',
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular",
+    'rest_framework',
+    'PhysicalExamResult',
+    'RIPS',
 ]
 
 MIDDLEWARE = [
@@ -76,14 +77,19 @@ WSGI_APPLICATION = "Reports.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
         "ENGINE": "djongo",
         "NAME": "DBTest",
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-                'host': 'mongodb+srv://leonardorivero:15FBq5jqCly2gAq8@cluster0.vwn5qfs.mongodb.net/?retryWrites=true&w=majority'
-        }
+                'host': 'mongodb://root:example@localhost:27017/',
+                'port': 27017,
+                'username': 'root',
+                'password': 'example',
+                'authMechanism': 'SCRAM-SHA-1'
+            },
     }
 }
 
@@ -110,9 +116,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
