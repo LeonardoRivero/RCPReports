@@ -1,40 +1,42 @@
+from datetime import datetime
 from http import HTTPStatus
 from django.forms import model_to_dict
 from rest_framework.exceptions import ValidationError
 from django.http import HttpResponse
 from rest_framework.request import Request
+
+from .serializers import PhysicalExamResultSerializer
 from .Adapters import Controllers
 from .Domine.Interfaces import Controller
-from .models import Blog
+from .models import PhysicalExamResults
 from rest_framework.generics import GenericAPIView
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.response import Response
 
+
 # Create your views here.
 
 
-def index(request):
-    e = Blog()
-    e.name = "Gaby"
-    e.last_name = "Rojas"
-    e.save()
-    return HttpResponse()
+# def index(request):
+#     e = PhysicalExamResults()
+#     e.date_exam = datetime.today()
+#     e.result = [{'description': 'manos', 'result': '56'},
+#                 {'description': 'pies', 'result': '66'}]
+#     e.patient_id = 89
+#     e.save()
+#     return HttpResponse()
 
 
-class CRUDAppointment(GenericAPIView):
+class CRUDPhysicalExamResult(GenericAPIView):
     """
     Create,Retrieve,Update or Delete an object Consult.
     """
-    queryset = Blog.objects.none()
-    controller: Controller = Controllers.FactoryController.create_controller(
-        Controllers.Appointment)
+    queryset = PhysicalExamResults.objects.none()
+    controller: Controller = None
 
     def get_serializer_class(self):
-        return AppointmentSerializer
+        return PhysicalExamResultSerializer
 
-    @extend_schema(
-        responses=AppointmentSerializer,
-    )
     def get(self, request: Request, pk: int = None):
         try:
             data, status = self.controller.get(request, pk)
@@ -43,6 +45,9 @@ class CRUDAppointment(GenericAPIView):
         except KeyError as e:
             return Response(str(e), status=HTTPStatus.UNPROCESSABLE_ENTITY, exception=True)
 
+    @extend_schema(
+        request=PhysicalExamResultSerializer,
+    )
     def post(self, request: Request, ):
         data, status = self.controller.post(request)
         response = model_to_dict(data)
