@@ -11,8 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-
+from dotenv import load_dotenv
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-n21f-h2s*t-08)p*g85*a4-&durh8=$c7z%3$$9gp+a0^c3$(("
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "drf_spectacular",
     'rest_framework',
+    'rest_framework_simplejwt',
     'PhysicalExamResult',
     'RIPS',
 ]
@@ -81,13 +84,13 @@ WSGI_APPLICATION = "Reports.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "djongo",
-        "NAME": "DBTest",
+        "NAME": os.getenv('NAME_DATABASE'),
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-                'host': 'mongodb://root:example@localhost:27017/',
-                'port': 27017,
-                'username': 'root',
-                'password': 'example',
+                'host': os.getenv('HOST_MONGO_DB'),
+                'port': int(os.getenv('PORT')),
+                'username': os.getenv('USER_DB'),
+                'password': os.getenv('PASSWORD_DB'),
                 'authMechanism': 'SCRAM-SHA-1'
             },
     }
@@ -143,4 +146,16 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'SCHEMA_PATH_PREFIX': r'/api/'
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    'SIGNING_KEY': os.getenv('SECRET_KEY'),
+    'VERIFYNG_KEY':os.getenv('SECRET_KEY')  
 }

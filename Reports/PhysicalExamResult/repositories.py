@@ -1,9 +1,7 @@
-from datetime import datetime
-from rest_framework.exceptions import ValidationError
 from typing import Iterable
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-from django.db.models import ProtectedError
+from django.db.models import ProtectedError,QuerySet
 from .Domine.Entities import PhysicalExamResultEntity
 from .Domine.Interfaces import Repository
 from .models import PhysicalExamResults
@@ -13,17 +11,6 @@ from bson.objectid import ObjectId
 class PhisycalExamParameterResultRepository(Repository):
 
     def add(self, entity: PhysicalExamResultEntity):
-        # model=PhysicalExamResults()
-        # model.date_exam=entity.date_exam
-        # model.patient_id=entity.patient_id
-        # model.result=entity.result
-        # model.save()
-        # e = PhysicalExamResults()
-        # e.date_exam = entity.date_exam
-        # e.result = entity.result
-        # e.patient_id = entity.patient_id
-        # response=e.save()
-        # print(response)
         response, created = PhysicalExamResults.objects.get_or_create(
             date_exam=entity.date_exam,
             patient_id=entity.patient_id,
@@ -31,7 +18,7 @@ class PhisycalExamParameterResultRepository(Repository):
         )
         return response
 
-    def get_by_id(self, pk: int) -> Iterable[PhysicalExamResults]:
+    def get_by_id(self, pk: int) -> QuerySet:
         try:
             objInstance = ObjectId(pk)
             return PhysicalExamResults.objects.get(_id=objInstance)
@@ -46,28 +33,16 @@ class PhisycalExamParameterResultRepository(Repository):
             raise Http404
 
     def update(self, entity: PhysicalExamResultEntity, pk: int) -> PhysicalExamResultEntity:
+        assert pk==entity._id
         current_record = self.get_by_id(pk)
-        return current_record.update_or_create(
-            date_exam=datetime.today(),
-            patient_id=entity.patient_id,
-            result=entity.result
-        )
-
-        # entity_as_dict = asdict(entity)
-        # serializer = self.SaverSerializer(current_record, data=entity_as_dict)
-        # if serializer.is_valid():
-        #     record = serializer.save()
-        #     return record
-        # raise ValidationError(serializer.errors)
+        current_record.date_exam=entity.date_exam
+        current_record.result=entity.result
+        current_record.save()
+        updated_record = self.get_by_id(pk)
+        return updated_record
 
     def update_partial(self, entity: dict, pk: int):
         raise NotImplementedError()
-        current_record = self.get_by_id(pk)
-        serializer = self.SaverSerializer(current_record, data=entity, partial=True)
-        if serializer.is_valid():
-            record = serializer.save()
-            return record
-        raise ValidationError(serializer.errors)
 
     def delete(self, id: int) -> bool:
         try:
