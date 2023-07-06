@@ -5,9 +5,11 @@ from http import HTTPStatus
 from ..Domine.Entities import PhysicalExamResultEntity
 from ..repositories import PhisycalExamParameterResultRepository
 # from  RCP_Project.containers import container
-from ..Aplication.UseCases import  PhysicalExamResultUseCase
+from ..Aplication.UseCases import PhysicalExamResultUseCase
 from ..Domine.Interfaces import Repository, Controller
 from enum import Enum
+from django.db.models import QuerySet
+from http import HTTPStatus
 # from dependency_injector.wiring import inject
 
 
@@ -32,18 +34,17 @@ class PhysicalExamResultController(Controller):
     def get_repository(self) -> Repository:
         return self.repository
 
-    def get(self, request: Request, pk: int = None) -> Tuple[object, HTTPStatus]:
-        use_case = PhysicalExamResultUseCase(self)
+    def get(self, request: Request, pk: int = None) -> Tuple[QuerySet, HTTPStatus]:
         try:
-            # if (request.query_params):
-            #     data = use_case.get_by_query_params(request.query_params)
-            #     status = HTTPStatus.NO_CONTENT if data == None else HTTPStatus.OK
-            #     return (data, status)
+            if (request.query_params):
+                data = self.use_case.get_by_query_params(request.query_params)
+                status = HTTPStatus.NO_CONTENT if data == None else HTTPStatus.OK
+                return (data, status)
             if pk:
-                data = use_case.get_by_id(pk)
+                data = self.use_case.get_by_id(pk)
                 return (data, HTTPStatus.ACCEPTED)
             else:
-                data = use_case.get_all()
+                data = self.use_case.get_all()
                 return (data, HTTPStatus.ACCEPTED)
         except KeyError as e:
             return (None, HTTPStatus.UNPROCESSABLE_ENTITY)

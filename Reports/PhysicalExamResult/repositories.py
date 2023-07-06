@@ -7,6 +7,7 @@ from django.db.models import ProtectedError
 from .Domine.Entities import PhysicalExamResultEntity
 from .Domine.Interfaces import Repository
 from .models import PhysicalExamResults
+from bson.objectid import ObjectId
 
 
 class PhisycalExamParameterResultRepository(Repository):
@@ -23,7 +24,7 @@ class PhisycalExamParameterResultRepository(Repository):
         # e.patient_id = entity.patient_id
         # response=e.save()
         # print(response)
-        response,created= PhysicalExamResults.objects.get_or_create(
+        response, created = PhysicalExamResults.objects.get_or_create(
             date_exam=entity.date_exam,
             patient_id=entity.patient_id,
             result=entity.result
@@ -32,7 +33,9 @@ class PhisycalExamParameterResultRepository(Repository):
 
     def get_by_id(self, pk: int) -> Iterable[PhysicalExamResults]:
         try:
-            return PhysicalExamResults.objects.get(pk=pk)
+            objInstance = ObjectId(pk)
+            return PhysicalExamResults.objects.get(_id=objInstance)
+            # return PhysicalExamResults.objects.filter(patient_id=pk)
         except ObjectDoesNotExist:
             raise Http404
 
@@ -40,7 +43,7 @@ class PhisycalExamParameterResultRepository(Repository):
         try:
             return PhysicalExamResults.objects.all()
         except ObjectDoesNotExist:
-                raise Http404
+            raise Http404
 
     def update(self, entity: PhysicalExamResultEntity, pk: int) -> PhysicalExamResultEntity:
         current_record = self.get_by_id(pk)
@@ -75,7 +78,6 @@ class PhisycalExamParameterResultRepository(Repository):
             return False
 
     def find_by_parameter(self, parameters: dict) -> Iterable[PhysicalExamResultEntity]:
-        raise NotImplementedError()
         data = PhysicalExamResults.objects.filter(**parameters)
         if (data.exists()):
             return data

@@ -1,7 +1,5 @@
-from datetime import datetime
 from http import HTTPStatus
 from django.forms import model_to_dict
-from django.http import HttpResponse
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 
@@ -11,7 +9,7 @@ from .models import PhysicalExamResults
 from rest_framework.generics import GenericAPIView
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.response import Response
-from .Adapters.Controllers import FactoryController,Controllers
+from .Adapters.Controllers import FactoryController, Controllers
 
 
 class CRUDPhysicalExamResult(GenericAPIView):
@@ -27,12 +25,10 @@ class CRUDPhysicalExamResult(GenericAPIView):
     def get(self, request: Request, pk: int = None):
         try:
             data, status = self.controller.get(request, pk)
-            is_many=True if pk ==None else False
-            response = self.get_serializer(data, many=is_many)
+            is_many = True if pk == None else False
+            response = PhysicalExamResultSerializer(data, many=is_many)
             return Response(response.data, status=status)
-        except KeyError as e:
-            return Response(str(e), status=HTTPStatus.UNPROCESSABLE_ENTITY, exception=True)
-        except TypeError as e:
+        except (KeyError, TypeError) as e:
             return Response(str(e), status=HTTPStatus.UNPROCESSABLE_ENTITY, exception=True)
 
     @extend_schema(

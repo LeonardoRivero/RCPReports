@@ -6,7 +6,7 @@ class ExamResult(models.Model):
     description = models.CharField(max_length=100)
     result = models.CharField(max_length=100)
     objects = models.DjongoManager()
-    
+
     class Meta:
         abstract = True
 

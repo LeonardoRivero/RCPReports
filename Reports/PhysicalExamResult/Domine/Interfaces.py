@@ -1,5 +1,8 @@
 from abc import ABC, ABCMeta, abstractmethod
+from typing import Tuple
 from requests import Request
+from django.db.models import QuerySet
+from http import HTTPStatus
 
 
 class Repository(ABC):
@@ -40,7 +43,7 @@ class Controller(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get(self, request: Request, pk: int = None):
+    def get(self, request: Request, pk: int = None) -> Tuple[QuerySet, HTTPStatus]:
         raise NotImplementedError
 
     @abstractmethod

@@ -1,4 +1,5 @@
 from dataclasses import InitVar, dataclass, field
+from typing import List
 import datetime
 
 
@@ -10,10 +11,10 @@ class ExamResult:
 
 @dataclass
 class PhysicalExamResultEntity():
-    date_exam:datetime
-    result:list[ExamResult]
-    patient_id:int=0
-    _id:int=0
+    date_exam: datetime
+    result: List[ExamResult]
+    patient_id: int = 0
+    _id: int = 0
 
 
 # @dataclass
