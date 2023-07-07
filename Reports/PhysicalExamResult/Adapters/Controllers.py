@@ -52,7 +52,7 @@ class PhysicalExamResultController(Controller):
     def post(self, request: Request):
         entity = PhysicalExamResultEntity(**request.data)
         response = self.use_case.create(entity)
-        return (response, HTTPStatus.ACCEPTED)
+        return (response, HTTPStatus.CREATED)
 
     def put(self, request: Request, pk: int):
         entity = PhysicalExamResultEntity(**request.data)
