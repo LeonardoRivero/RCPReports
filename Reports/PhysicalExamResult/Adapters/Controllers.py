@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import Tuple
 from rest_framework.request import Request
 from http import HTTPStatus
+from .serializers import PhysicalExamResultSerializer
 from ..Domine.Entities import PhysicalExamResultEntity
 from ..repositories import PhisycalExamParameterResultRepository
 # from  RCP_Project.containers import container
@@ -30,6 +31,7 @@ class PhysicalExamResultController(Controller):
     def __init__(self) -> None:
         self.repository = PhisycalExamParameterResultRepository()
         self.use_case = PhysicalExamResultUseCase(self)
+        self.serializer = PhysicalExamResultSerializer
 
     def get_repository(self) -> Repository:
         return self.repository
@@ -38,14 +40,19 @@ class PhysicalExamResultController(Controller):
         try:
             if (request.query_params):
                 data = self.use_case.get_by_query_params(request.query_params)
-                status = HTTPStatus.NO_CONTENT if data == None else HTTPStatus.OK
-                return (data, status)
+                is_many = True if len(data) > 1 else False
+                payload = data if is_many else data[0]
+                status = HTTPStatus.NO_CONTENT if payload == None else HTTPStatus.OK
+                response = self.serializer(payload, many=is_many)
+                return (response.data, status)
+
             if pk:
                 data = self.use_case.get_by_id(pk)
-                return (data, HTTPStatus.ACCEPTED)
             else:
                 data = self.use_case.get_all()
-                return (data, HTTPStatus.ACCEPTED)
+            is_many = True if pk == None else False
+            response = self.serializer(data, many=is_many)
+            return (response.data, HTTPStatus.ACCEPTED)
         except KeyError as e:
             return (None, HTTPStatus.UNPROCESSABLE_ENTITY)
 

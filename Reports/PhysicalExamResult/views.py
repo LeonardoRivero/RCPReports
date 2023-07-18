@@ -3,7 +3,7 @@ from django.http import HttpResponseBadRequest
 from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 
-from .serializers import PhysicalExamResultSerializer
+from .Adapters.serializers import PhysicalExamResultSerializer
 from .Domine.Interfaces import Controller
 from .models import PhysicalExamResults
 from rest_framework.generics import GenericAPIView
@@ -11,6 +11,7 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.response import Response
 from .Adapters.Controllers import FactoryController, Controllers
 from rest_framework.permissions import IsAuthenticated
+
 
 class CRUDPhysicalExamResult(GenericAPIView):
     """
@@ -26,9 +27,7 @@ class CRUDPhysicalExamResult(GenericAPIView):
     def get(self, request: Request, pk: int = None):
         try:
             data, status = self.controller.get(request, pk)
-            is_many = True if pk == None else False
-            response = PhysicalExamResultSerializer(data, many=is_many)
-            return Response(response.data, status=status)
+            return Response(data, status=status)
         except (KeyError, TypeError) as e:
             return Response(str(e), status=HTTPStatus.UNPROCESSABLE_ENTITY, exception=True)
 
@@ -50,10 +49,10 @@ class CRUDPhysicalExamResult(GenericAPIView):
         except AssertionError as e:
             return Response(e, status=HTTPStatus.CONFLICT, exception=True)
 
-    def delete(self, request: Request, pk: int=None):
+    def delete(self, request: Request, pk: int = None):
         try:
-            assert pk!=None,"Not Found identifier"
+            assert pk != None, "Not Found identifier"
             response, status = self.controller.delete(pk)
             return Response(response, status=status)
         except AssertionError as e:
-            return HttpResponseBadRequest(e.args,exception=True)
+            return HttpResponseBadRequest(e.args, exception=True)

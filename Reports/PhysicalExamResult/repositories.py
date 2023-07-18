@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Iterable
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-from django.db.models import ProtectedError,QuerySet
+from django.db.models import ProtectedError, QuerySet
 from .Domine.Entities import PhysicalExamResultEntity
 from .Domine.Interfaces import Repository
 from .models import PhysicalExamResults
@@ -34,10 +34,10 @@ class PhisycalExamParameterResultRepository(Repository):
             raise Http404
 
     def update(self, entity: PhysicalExamResultEntity, pk: int) -> PhysicalExamResultEntity:
-        assert pk==entity._id
+        assert pk == entity._id
         current_record = self.get_by_id(pk)
-        current_record.date_exam=entity.date_exam
-        current_record.result=entity.result
+        current_record.date_exam = entity.date_exam
+        current_record.result = entity.result
         current_record.save()
         updated_record = self.get_by_id(pk)
         return updated_record
@@ -57,4 +57,4 @@ class PhisycalExamParameterResultRepository(Repository):
         data = PhysicalExamResults.objects.filter(**parameters)
         if (data.exists()):
             return data
-        return None
+        return [None]
