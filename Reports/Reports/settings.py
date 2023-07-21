@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
     'PhysicalExamResult',
     'RIPS',
 ]
@@ -137,9 +139,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'RCP',
     'DESCRIPTION': 'Registro Clinico de Pacientes',
@@ -151,11 +151,21 @@ SPECTACULAR_SETTINGS = {
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTStatelessUserAuthentication',
     ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
 }
-
+REST_USE_JWT = True
 SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer', ),
     'SIGNING_KEY': os.getenv('SECRET_KEY'),
     'VERIFYNG_KEY':os.getenv('SECRET_KEY')  
+}
+
+REST_AUTH = {
+    'JWT_AUTH_COOKIE': 'jwt-access-token',
+    'JWT_AUTH_REFRESH_COOKIE': 'jwt-refresh-token',
+    'USE_JWT': True,
 }
