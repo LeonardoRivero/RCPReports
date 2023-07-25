@@ -15,6 +15,7 @@ django = "==3.0.5"
 python-dotenv = "*"
 djangorestframework-simplejwt = "*"
 dj-rest-auth = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
